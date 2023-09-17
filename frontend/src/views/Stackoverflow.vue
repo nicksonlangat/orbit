@@ -1,26 +1,9 @@
 <template>
 <div class="container mx-auto">
-    <nav class="flex text-neutral-200 justify-between">
-        <div class="flex gap-2 items-center">
-            <IconPlanet class="text-[#853bce]" size="44" />
-            <h3 class="text-4xl font-extrabold">Orbit</h3>
-        </div>
-        <div class="flex gap-5 relative">
-            <a href="">Github issues</a>
-            <a href="">StackOveflow</a>
-        </div>
-        <div class="flex gap-5 text-gray-500 items-center">
-            <IconSettings />
-            <IconBell />
-            <span class="px-2 py-2 bg-zinc-800/50 rounded-full">
-                <IconUser />
-            </span>
-        </div>
-    </nav>
-
+    <Navigation/>
     <div class="flex gap-5 mt-5">
         <div class="w-full rounded-md">
-            <div class="">
+            <div class="mt-5">
                 <div class="flex justify-between">
                     <h3 class="text-white text-4xl">Django questions</h3>
                     <div class="flex text-white gap-5 relative">
@@ -35,7 +18,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 mt-5 gap-5 gap-y-5">
+                <div class="grid grid-cols-2 mt-8 gap-5 gap-y-5">
                     <div v-for="question in filteredQuestions" class="text-white bg-[#181622] h-44 rounded-md">
                         <div class="p-3">
                             <a target='_blank' :href=question.link>
@@ -88,47 +71,20 @@
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue'
 import {
-    IconPlanet
-} from '@tabler/icons-vue';
-import {
+    IconFilter,
     IconSearch
-} from '@tabler/icons-vue';
-import {
-    IconFilter
-} from '@tabler/icons-vue';
-import {
-    IconGitBranch
-} from '@tabler/icons-vue';
-import {
-    IconPlus
-} from '@tabler/icons-vue';
-import {
-    IconSettings
-} from '@tabler/icons-vue';
-import {
-    IconUser
-} from '@tabler/icons-vue';
-import {
-    IconBell
 } from '@tabler/icons-vue';
 import {
     mapActions,
     mapGetters
 } from 'vuex';
-
+import Navigation from '@/components/Navigation.vue'
 export default {
     name: 'StackOverflow',
     components: {
-        HelloWorld,
-        IconBell,
-        IconUser,
-        IconSettings,
-        IconPlanet,
-        IconPlus,
+        Navigation,
         IconSearch,
-        IconGitBranch,
         IconFilter
     },
     data() {
@@ -146,7 +102,7 @@ export default {
             getStoredQuestions: 'getStoredQuestions',
         }),
         filteredQuestions() {
-            return this.questions.slice(this.initialIndex, this.finalIndex).filter((question) => {
+            return this.getStoredQuestions.slice(this.initialIndex, this.finalIndex).filter((question) => {
                 return question.title.toLowerCase().includes(this.text.toLowerCase())
             })
         },
@@ -158,13 +114,9 @@ export default {
         init() {
             this.getAllQuestions({
                 tag: this.currentTag,
-                cb: (res) => {
-                    this.questions = res.data
+                cb: () => {
                 }
             })
-        },
-        formatDate(date) {
-            return moment(date).format("MMM Do YY")
         },
         truncateString(str, num) {
             return str.length > num ? str.slice(0, num) : str
