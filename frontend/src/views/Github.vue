@@ -1,22 +1,6 @@
 <template>
 <div class="container mx-auto">
-    <nav class="flex text-neutral-200 justify-between">
-        <div class="flex gap-2 items-center">
-            <IconPlanet class="text-[#853bce]" size="44" />
-            <h3 class="text-4xl font-extrabold">Orbit</h3>
-        </div>
-        <div class="flex gap-5 relative">
-            <a href="">Github issues</a>
-            <a href="">StackOveflow</a>
-        </div>
-        <div class="flex gap-5 text-gray-500 items-center">
-            <IconSettings />
-            <IconBell />
-            <span class="px-2 py-2 bg-zinc-800/50 rounded-full">
-                <IconUser />
-            </span>
-        </div>
-    </nav>
+    <Navigation/>
 
     <div class="flex gap-5 mt-10">
         <div class="w-5/6 rounded-md">
@@ -234,7 +218,6 @@
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue'
 import {
     IconPlanet
 } from '@tabler/icons-vue';
@@ -259,10 +242,11 @@ import {
 import {
     IconBell
 } from '@tabler/icons-vue';
+import Navigation from '@/components/Navigation.vue'
 export default {
     name: 'HomeView',
     components: {
-        HelloWorld,
+        Navigation,
         IconBell,
         IconUser,
         IconSettings,
