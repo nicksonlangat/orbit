@@ -3,9 +3,9 @@
 <TransitionRoot appear :show="isOpen" as="template">
     <Dialog as="div" @close="closeModal" class="relative z-10">
         <div class="fixed inset-0 overflow-y-auto">
-            <div class="flex h-72 text-center">
+            <div class="flex h-80  font-base text-center">
                 <TransitionChild as="template" enter='transform transition ease-in-out duration-500 sm:duration-700' enterFrom='translate-x-full' enterTo='translate-x-0' leave='transform transition ease-in-out duration-500 sm:duration-700' leaveFrom='translate-x-0' leaveTo='translate-x-full'>
-                    <DialogPanel class="w-full max-w-lg transform overflow-hidden font-base bg-secondary p-6 text-left align-middle shadow-xl transition-all">
+                    <DialogPanel class="w-full  max-w-lg transform overflow-hidden font-base bg-secondary p-6 text-left align-middle shadow-xl transition-all">
                         <div class="mt-2 text-white font-base">
                             <div class="flex justify-between items-center">
                                 <div class="flex gap-2  items-center">
@@ -19,6 +19,10 @@
                                 <a href="/">Home</a>
                                 <a href="/issues">Github issues</a>
                                 <a href="/questions">Stackoveflow questions</a>
+                                <div class="flex justify-between gap-5">
+                                    <a class="bg-primary text-white text-xs w-1/2 text-center py-1 rounded-md" href="login">Login</a>
+                                    <a href="/signup" class="bg-primary text-white text-xs w-1/2 text-center py-1 rounded-md">Signup</a>
+                                </div>
                             </div>
                         </div>
                     </DialogPanel>

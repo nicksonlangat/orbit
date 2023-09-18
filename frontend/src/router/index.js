@@ -11,13 +11,59 @@ const routes = [
     path: '/issues',
     name: 'issues',
 
-    component: () => import('../views/Github.vue')
+    component: () => import('../views/Github.vue'),
+    async beforeEnter(to, from, next) {
+      try {
+        const hasPermission = localStorage.getItem("hasOrbitPermission")
+        if (hasPermission) {
+          next()
+        }
+        else {
+          next({
+            name: "login"
+          })
+        }
+      } catch (e) {
+        next({
+          name: "login"
+        })
+      }
+    } 
   },
   {
     path: '/questions',
     name: 'questions',
 
-    component: () => import('../views/Stackoverflow.vue')
+    component: () => import('../views/Stackoverflow.vue'),
+    async beforeEnter(to, from, next) {
+      try {
+        const hasPermission = localStorage.getItem("hasOrbitPermission")
+        if (hasPermission) {
+          next()
+        }
+        else {
+          next({
+            name: "login"
+          })
+        }
+      } catch (e) {
+        next({
+          name: "login"
+        })
+      }
+    } 
+  },
+  {
+    path: '/login',
+    name: 'login',
+
+    component: () => import('../views/Login.vue')
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+
+    component: () => import('../views/Signup.vue')
   }
 ]
 

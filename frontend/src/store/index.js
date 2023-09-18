@@ -104,7 +104,33 @@ getStoredIssues: (state) => {
       .catch((error) => {
           return Promise.reject(error)
       })
-  }
+  },
+  async signupUser({ commit }, { payload, cb }) {
+    return await Api(false)
+        .post('/signup', payload)
+        .then((response) => {
+            if (cb) {
+                cb(response.data)
+            }
+            return response.data
+        })
+        .catch((error) => {
+            return Promise.reject(error)
+        })
+  },
+  async loginUser({ commit }, { payload, cb }) {
+    return await Api(false)
+        .post('auth/token/', payload)
+        .then((response) => {
+            if (cb) {
+                cb(response.data)
+            }
+            return response.data
+        })
+        .catch((error) => {
+            return Promise.reject(error)
+        })
+  },
   
   },
   modules: {
