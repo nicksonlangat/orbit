@@ -1,5 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
+from django.conf import settings
+from django.db import transaction
+
+from .models import Organization
 
 
 def scrape_data(tag):
@@ -57,3 +61,27 @@ def scrape_data(tag):
         })
 
     return questions
+
+def get_github_issues(url):
+
+    url = url.strip().split('/')
+    owner = url[3]
+    repo = url[4]
+    response = requests.get(
+        f"https://api.github.com/repos/{owner}/{repo}/issues", 
+        headers={"Authorization": f"Bearer {settings.GITHUB_ACCESS_TOKEN}"}
+        )
+    
+    return response.json()
+
+@transaction.atomic
+def organization_create(data, *args, **kwargs) -> Organization:
+
+    obj = Organization(
+        url=data["url"]
+    )
+
+    obj.full_clean()
+    obj.save()
+
+    return obj

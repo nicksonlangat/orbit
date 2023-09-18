@@ -1,38 +1,47 @@
 <template>
 <div class="container mx-auto">
-    <Navigation/>
-
+    <Navigation />
     <div class="flex gap-5 mt-10">
-        <div class="w-5/6 rounded-md">
-            <div class="relative overflow-x-auto shadow-md">
-                <div class="flex justify-between">
-                    <h3 class="text-white text-4xl">Github Issues</h3>
-                    <div class="flex text-white gap-5 relative">
-
-                        <button class="bg-[#181622] rounded-md text-white px-6 py-1.5 items-center inline-flex gap-2">
-                            <IconFilter />
-                            Filters
-                        </button>
-                        <input type="text" class="bg-[#181622] focus:outline-none focus:ring-0 py-1.5 px-6 pl-10 rounded-md" placeholder="Search issues">
-                        <IconSearch class="absolute top-2.5 left-40" />
-                        <button class="bg-[#853bce] rounded-md text-white px-6 py-1.5 items-center inline-flex gap-2">
-                            <IconPlus />
-                            Add github repo
-                        </button>
+        <div class="lg:w-5/6 rounded-md">
+            <div class="mx-5 lg:mx-0 rounded-md">
+                <div class="grid relative text-gray lg:grid-cols-3 gap-5">
+                        <select v-model="currentRepo" class="bg-secondary focus:border-primary text-sm w-[340px] lg:w-full focus:outline-none placeholder:text-gray focus:ring-0 py-2 pl-4 rounded-md" placeholder="Search issues">
+                            <option class="text-sm" v-for="org in organizations" :value="org.url">{{org.name}} - {{ org.repo }}</option>
+                        </select>
+                        <input v-model="text" type="text" class="bg-secondary focus:outline-none focus:border-primary placeholder:text-gray text-sm focus:ring-0 py-2 px-6 pl-10 rounded-md" placeholder="Search issues">
+                        <IconSearch size="20" class="absolute text-gray lg:top-2 top-16 mt-1 lg:mt-0 left-3  lg:left-80" />
+                        <NewOrganizationModal />
+                </div>
+                <div v-if="isLoading" class="flex mt-20 flex-col justify-center items-center text-gray gap-3 text-2xl">
+                    <svg aria-hidden="true" class="inline w-10 h-10 mr-2 text-secondary animate-spin fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                    </svg>
+                    <h3>Fetching issues, hold on...</h3>
+                </div>
+                <div class="lg:hidden grid gap-4 mt-5">
+                    <div v-for="issue in filteredIssues" class="bg-secondary text-white rounded-md h-12">
+                        <div class="mt-2 ml-3 mr-2 flex justify-between items-center">
+                                <a target="_blank" :href="issue.html_url" class="text-xs">{{ truncateString(issue.title, 90) }}</a>
+                            <div>
+                                <a target="_blank" :href="issue.html_url">
+                                    <IconGitBranch class="text-success" />
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <table class="w-full mt-5 text-sm text-left">
-
-                    <thead class="text-xs text-stone-500 uppercase">
+                <table v-if="!isLoading" class="rounded-md w-full lg:block hidden bg-secondary mt-8 text-sm text-left">
+                    <thead class="text-xs border-b border-gray/30 text-gray uppercase">
                         <tr>
                             <th scope="col" class="px-6 py-3">
-                                Company
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Repo
-                            </th>
-                            <th scope="col" class="px-6 py-3">
                                 Issue
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                owner
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                repo
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Link
@@ -40,178 +49,86 @@
 
                         </tr>
                     </thead>
-                    <tbody class="bg-zinc-900/50 rounded-md shadow-md">
-                        <tr class="text-white bg-zinc-900/70">
-                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                                chiefonboarding
+                    <tbody class="text-xs rounded-md shadow-md">
+                        <tr v-for="issue of filteredIssues" class="text-white bg-secondary even:bg-main/50">
+                            <th scope="row" class="px-4 py-4">
+                                {{ truncateString(issue.title, 90) }}
                             </th>
                             <td class="px-6 py-4">
-                                ChiefOnboarding
+                                {{ currentOrganization?.name }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ currentOrganization?.repo }}
                             </td>
                             <td class="px-6 py-4">
-                                Notification - Couldn't deliver email message: provider error
+                                <a target="_blank" :href="issue.html_url">
+                                    <IconGitBranch class="text-success" />
+                                </a>
                             </td>
-                            <td class="px-6 py-4">
-                                <IconGitBranch class="text-[#238636]" />
-                            </td>
-
                         </tr>
-                        <tr class="text-white">
-                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                                chiefonboarding
-                            </th>
-                            <td class="px-6 py-4">
-                                ChiefOnboarding
-                            </td>
-                            <td class="px-6 py-4">
-                                Notification - Couldn't deliver email message: provider error
-                            </td>
-                            <td class="px-6 py-4">
-                                <IconGitBranch class="text-[#238636]" />
-                            </td>
-
-                        </tr>
-                        <tr class="text-white bg-zinc-900/70">
-                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                                chiefonboarding
-                            </th>
-                            <td class="px-6 py-4">
-                                ChiefOnboarding
-                            </td>
-                            <td class="px-6 py-4">
-                                Notification - Couldn't deliver email message: provider error
-                            </td>
-                            <td class="px-6 py-4">
-                                <IconGitBranch class="text-[#238636]" />
-                            </td>
-
-                        </tr>
-                        <tr class="text-white ">
-                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                                chiefonboarding
-                            </th>
-                            <td class="px-6 py-4">
-                                ChiefOnboarding
-                            </td>
-                            <td class="px-6 py-4">
-                                Notification - Couldn't deliver email message: provider error
-                            </td>
-                            <td class="px-6 py-4">
-                                <IconGitBranch class="text-[#238636]" />
-                            </td>
-
-                        </tr>
-                        <tr class="text-white bg-zinc-900/70">
-                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                                chiefonboarding
-                            </th>
-                            <td class="px-6 py-4">
-                                ChiefOnboarding
-                            </td>
-                            <td class="px-6 py-4">
-                                Notification - Couldn't deliver email message: provider error
-                            </td>
-                            <td class="px-6 py-4">
-                                <IconGitBranch class="text-[#238636]" />
-                            </td>
-
-                        </tr>
-                        <tr class="text-white ">
-                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                                chiefonboarding
-                            </th>
-                            <td class="px-6 py-4">
-                                ChiefOnboarding
-                            </td>
-                            <td class="px-6 py-4">
-                                Notification - Couldn't deliver email message: provider error
-                            </td>
-                            <td class="px-6 py-4">
-                                <IconGitBranch class="text-[#238636]" />
-                            </td>
-
-                        </tr>
-                        <tr class="text-white bg-zinc-900/70">
-                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                                chiefonboarding
-                            </th>
-                            <td class="px-6 py-4">
-                                ChiefOnboarding
-                            </td>
-                            <td class="px-6 py-4">
-                                Notification - Couldn't deliver email message: provider error
-                            </td>
-                            <td class="px-6 py-4">
-                                <IconGitBranch class="text-[#238636]" />
-                            </td>
-
-                        </tr>
-                        <tr class="text-white">
-                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                                chiefonboarding
-                            </th>
-                            <td class="px-6 py-4">
-                                ChiefOnboarding
-                            </td>
-                            <td class="px-6 py-4">
-                                Notification - Couldn't deliver email message: provider error
-                            </td>
-                            <td class="px-6 py-4">
-                                <IconGitBranch class="text-[#238636]" />
-                            </td>
-
-                        </tr>
-                        <tr class="text-white bg-zinc-900/70">
-                            <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                                chiefonboarding
-                            </th>
-                            <td class="px-6 py-4">
-                                ChiefOnboarding
-                            </td>
-                            <td class="px-6 py-4">
-                                Notification - Couldn't deliver email message: provider error
-                            </td>
-                            <td class="px-6 py-4">
-                                <IconGitBranch class="text-[#238636]" />
-                            </td>
-
-                        </tr>
-
                     </tbody>
                 </table>
 
-                <ul class="flex mt-2 text-base">
-                    <li>
-                        <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-stone-600 bg-zinc-800/30 border border-zinc-900 rounded-l-md">
-                            <span class="sr-only">Previous</span>
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4" />
-                            </svg>
-                        </a>
-                    </li>
+                <ul v-if="!isLoading" class="flex mt-2 text-base divide-x divide-main">
 
                     <li>
-                        <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-stone-600 bg-zinc-800/30 border border-zinc-900">2</a>
+                        <p @click="goToLastPage()" :class="pageNumber == 1 ? 'text-gray/20' : 'text-white'" class="flex cursor-pointer items-center justify-center px-4 h-10 leading-tight bg-secondary rounded-l-md">
+                            Previous page
+                        </p>
+                    </li>
+                    <li>
+                        <p @click="goToNextPage()" :class="filteredIssues.length < 9 ? 'text-gray/20' : 'text-white'" class="flex cursor-pointer items-center justify-center px-4 h-10 leading-tight bg-secondary rounded-r-md">
+                            Next page
+                        </p>
                     </li>
 
-                    <li>
-                        <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-stone-600 bg-zinc-800/30 border border-zinc-900">5</a>
-                    </li>
-                    <li>
-                        <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-stone-600 bg-zinc-800/30 border border-zinc-900 rounded-r-md">
-                            <span class="sr-only">Next</span>
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
-                            </svg>
-                        </a>
-                    </li>
                 </ul>
 
             </div>
-
         </div>
-        <div class="w-1/3 text-white bg-zinc-800/30 h-86 rounded-md">
-          <h3 class="mx-5 mt-2 text-3xl">Recent repos</h3>
+        <div class="w-1/3 hidden lg:block text-white  rounded-md">
+            <div class="grid grid-cols-2 gap-5">
+                <div class="bg-secondary text-white uppercase h-28 rounded-md flex flex-col justify-center items-center">
+                    <h3 class="text-gray font-bold text-2xl">total repos</h3>
+                    <h3 class="text-3xl font-bold">45</h3>
+                </div>
+                <div class="bg-secondary h-28 rounded-md text-white uppercase flex flex-col justify-center items-center">
+                    <h3 class="text-gray font-bold text-2xl">total repos</h3>
+                    <h3 class="text-3xl font-bold">45</h3>
+                </div>
+            </div>
+            <div class="bg-secondary pb-5 rounded-md">
+                <h3 class="mx-5 mt-2 bg-secondary text-2xl uppercase text-gray text-center">Recent repos</h3>
+                <table class="mt-5  text-sm text-left">
+                    <thead class="text-xs bg-main/50 text-gray uppercase">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Owner
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Repo
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Link
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-xs">
+                        <tr v-for="organization in organizations.slice(0, 6)" class="text-white border-b border-gray/30 last:border-0">
+                            <th scope="row" class="px-6 py-2 font-medium whitespace-nowrap">
+                                {{ organization.name }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ organization.repo }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <a :href="organization.url" target="_blank">
+                                    <IconBrandGithub class="text-primary" /></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -219,42 +136,105 @@
 
 <script>
 import {
-    IconPlanet
-} from '@tabler/icons-vue';
-import {
-    IconSearch
-} from '@tabler/icons-vue';
-import {
-    IconFilter
-} from '@tabler/icons-vue';
-import {
-    IconGitBranch
-} from '@tabler/icons-vue';
-import {
-    IconPlus
-} from '@tabler/icons-vue';
-import {
-    IconSettings
-} from '@tabler/icons-vue';
-import {
-    IconUser
-} from '@tabler/icons-vue';
-import {
-    IconBell
+    IconGitBranch,
+    IconFilter,
+    IconSearch,
+    IconBrandGithub
 } from '@tabler/icons-vue';
 import Navigation from '@/components/Navigation.vue'
+import NewOrganizationModal from '@/components/NewOrganizationModal.vue';
+import {
+    mapActions,
+    mapGetters
+} from 'vuex';
 export default {
     name: 'HomeView',
     components: {
         Navigation,
-        IconBell,
-        IconUser,
-        IconSettings,
-        IconPlanet,
-        IconPlus,
+        NewOrganizationModal,
         IconSearch,
         IconGitBranch,
-        IconFilter
+        IconFilter,
+        IconBrandGithub
+    },
+    data() {
+        return {
+            pageNumber: 1,
+            isLoading: false,
+            initialIndex: 0,
+            finalIndex: 9,
+            text: "",
+            currentRepo: "",
+            currentOrganization: null,
+        }
+    },
+    watch: {
+        currentRepo(newVal, oldVal) {
+            if (newVal) {
+                this.init()
+                this.currentOrganization = this.organizations.find(organization => organization.url == newVal)
+            }
+        }
+    },
+    computed: {
+        ...mapGetters({
+            getStoredOrganizations: 'getStoredOrganizations',
+            getStoredIssues: 'getStoredIssues'
+        }),
+        organizations() {
+            return this.getStoredOrganizations
+        },
+        filteredIssues() {
+            return this.getStoredIssues.slice(this.initialIndex, this.finalIndex).filter((issue) => {
+                return issue.title.toLowerCase().includes(this.text.toLowerCase())
+            })
+        },
+    },
+    methods: {
+        ...mapActions({
+            getAllOrganizations: 'getAllOrganizations',
+            getAllIssues: 'getAllIssues'
+        }),
+        init() {
+            this.isLoading = true
+            this.getAllIssues({
+                url: this.currentRepo,
+                cb: () => {
+                    this.isLoading = false
+                }
+            })
+        },
+        truncateString(str, num) {
+            return str.length > num ? str.slice(0, num) : str
+        },
+        goToNextPage() {
+            if (this.filteredIssues.length >= 9) {
+                this.pageNumber++
+                this.initialIndex += 9
+                this.finalIndex += 9
+            }
+        },
+        goToLastPage() {
+            if (this.pageNumber > 1) {
+                this.pageNumber--
+                this.initialIndex -= 9
+                this.finalIndex -= 9
+            }
+        }
+    },
+    mounted() {
+        this.getAllOrganizations({
+            cb: (res) => {
+                this.currentRepo = res[0].url
+                this.currentOrganization = res[0]
+            }
+        })
+        this.init()
+        this.emitter.on("refreshRepos", () => {
+            this.getAllOrganizations({
+                cb: () => {}
+            })
+        })
     }
 }
 </script>
