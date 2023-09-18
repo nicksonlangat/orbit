@@ -28,7 +28,7 @@ class Tag(BaseModel):
 
 
 class TagSelection(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag, blank=True)
     
     def __str__(self) -> str:

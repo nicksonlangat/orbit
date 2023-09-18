@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.db import transaction
 
-from .models import Organization
+from .models import Organization, Tag, TagSelection
 
 
 def scrape_data(tag):
@@ -85,6 +85,45 @@ def organization_create(data, *args, **kwargs) -> Organization:
     )
 
     obj.full_clean()
+    obj.save()
+
+    return obj
+
+
+@transaction.atomic
+def tag_create(data, *args, **kwargs) -> Tag:
+
+    obj = Tag(
+        name=data["name"]
+    )
+
+    obj.full_clean()
+    obj.save()
+
+    return obj
+
+
+@transaction.atomic
+def tag_selection_create(user, data, *args, **kwargs) -> TagSelection:
+
+    obj = TagSelection(
+        user=user
+    )
+    
+    obj.tags.set(data["tags"])
+
+    obj.full_clean()
+    obj.save()
+
+    return obj
+
+
+def tag_selection_update(id, data, *args, **kwargs) -> TagSelection:
+
+    obj = TagSelection.objects.get(id=id)
+    
+    obj.tags.set(data["tags"])
+
     obj.save()
 
     return obj
