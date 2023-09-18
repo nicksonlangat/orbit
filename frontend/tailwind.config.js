@@ -10,13 +10,19 @@ module.exports = {
         primary: "#853BCE",
         gray: "#827D7D",
         secondary: "#181622",
+        success: "#238636",
+        main: "#13111C",
       },
       backgroundColor: {
         primary: "#853BCE",
         secondary: "#181622",
-        main: "#13111C"
+        main: "#13111C",
+        success: "#238636",
+        gray: "#827D7D",
       }
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 }

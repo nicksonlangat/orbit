@@ -5,16 +5,17 @@
         <div class="w-full rounded-md">
             <div class="mt-2">
                 <div class="flex flex-col lg:flex-row gap-5 mx-5 lg:mx-0 justify-between">
-                    <h3 class="text-white text-3xl lg:text-4xl">Django questions</h3>
-                    <div class="flex text-white gap-5 relative">
+                    <h3 class="text-gray text-3xl lg:text-4xl">{{ currentTag }} questions</h3>
+                    <div class="flex flex-col lg:flex-row text-white gap-5 relative">
 
-                        <button class="bg-secondary rounded-md text-gray px-6 py-1.5 items-center inline-flex gap-2">
-                            <IconFilter />
-                            Tags
-                        </button>
-                        <input v-model="text" type="text" class="bg-secondary focus:outline-none focus:ring-0 py-1.5 px-6 pl-10 placeholder:text-gray rounded-md" placeholder="Search questions">
-                        <IconSearch class="absolute text-gray lg:top-2.5 top-2 left-36" />
-
+                        <select v-model="currentTag" class="bg-secondary focus:border-primary text-sm text-gray focus:outline-none placeholder:text-gray lg:w-64 focus:ring-0 py-2 pl-4 rounded-md" placeholder="Search issues">
+                            <option class="text-sm" value="Django">Django</option>
+                            <option class="text-sm" value="Python">Python</option>
+                            <option class="text-sm" value="Vue">Vue</option>
+                            <option class="text-sm" value="Tailwind">Tailwind</option>
+                        </select>
+                        <input v-model="text" type="text" class="bg-secondary focus:outline-none focus:border-primary focus:ring-0 py-2 px-6 pl-10 placeholder:text-gray rounded-md" placeholder="Search questions">
+                        <IconSearch class="absolute text-gray lg:top-2.5 top-16 mt-1 lg:mt-0 left-2 lg:left-72" />
                     </div>
                 </div>
 
@@ -96,12 +97,19 @@ export default {
     data() {
         return {
             text: "",
-            currentTag: "",
+            currentTag: "Django",
             questions: [],
             initialIndex: 0,
             finalIndex: 6,
             pageNumber: 1,
             isLoading: false
+        }
+    },
+    watch: {
+        currentTag(newVal, oldVal) {
+            if (newVal) {
+                this.init()
+            }
         }
     },
     computed: {
@@ -121,7 +129,7 @@ export default {
         init() {
             this.isLoading = true
             this.getAllQuestions({
-                tag: this.currentTag,
+                tag: this.currentTag.toLowerCase(),
                 cb: () => {
                     this.isLoading = false
                 }

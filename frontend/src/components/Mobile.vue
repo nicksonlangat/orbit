@@ -1,18 +1,18 @@
 <template>
-<IconMenu2 size="44" class="lg:hidden" v-if="!isOpen" @click="openModal" />
+<IconMenu2 size="32" class="lg:hidden" v-if="!isOpen" @click="openModal" />
 <TransitionRoot appear :show="isOpen" as="template">
     <Dialog as="div" @close="closeModal" class="relative z-10">
         <div class="fixed inset-0 overflow-y-auto">
-            <div class="flex min-h-full text-center">
+            <div class="flex h-72 text-center">
                 <TransitionChild as="template" enter='transform transition ease-in-out duration-500 sm:duration-700' enterFrom='translate-x-full' enterTo='translate-x-0' leave='transform transition ease-in-out duration-500 sm:duration-700' leaveFrom='translate-x-0' leaveTo='translate-x-full'>
                     <DialogPanel class="w-full max-w-lg transform overflow-hidden font-base bg-[#181622] p-6 text-left align-middle shadow-xl transition-all">
                         <div class="mt-2 text-white font-base">
                             <div class="flex justify-between items-center">
                                 <div class="flex gap-2  items-center">
-                                    <IconPlanet class="text-primary" size="44" />
-                                    <h3 class="text-3xl font-extrabold">Orbit</h3>
+                                    <IconPlanet class="text-primary" size="32" />
+                                    <h3 class="text-2xl font-extrabold">Orbit</h3>
                                 </div>
-                                <IconX v-if="isOpen" size="44" @click="closeModal" />
+                                <IconX v-if="isOpen" size="32" @click="closeModal" />
                             </div>
                             <div class="text-gray mt-10 flex flex-col gap-5 text-xl">
                                 <a href=""></a>
