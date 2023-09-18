@@ -19,7 +19,7 @@
                         <form class="mt-5 text-white">
                             <div class="flex flex-col gap-3">
                                 <label for="">Repo Url</label>
-                                <input v-model="url" type="text" class="border px-6 border-gray/20 placeholder:text-gray/30 bg-main py-2 rounded-md focus:outline-none focus:ring-0" placeholder="Enter repo url">
+                                <input v-model="url" type="text" class="border px-6 focus:border-primary  placeholder:text-gray bg-main py-2 rounded-md focus:outline-none focus:ring-0" placeholder="Enter repo url">
 
                             </div>
                         </form>
