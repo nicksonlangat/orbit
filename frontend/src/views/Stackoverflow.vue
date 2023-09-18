@@ -1,5 +1,5 @@
 <template>
-<div class="container mx-auto">
+<div class="container font-base mx-auto">
     <Navigation />
     <div class="flex gap-5 mt-5">
         <div class="w-full rounded-md">

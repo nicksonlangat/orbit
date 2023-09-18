@@ -1,5 +1,5 @@
 <template>
-<div class="container mx-auto">
+<div class="container font-base mx-auto">
     <Navigation />
     <div class="flex gap-5 mt-10">
         <div class="lg:w-5/6 rounded-md">
@@ -89,16 +89,16 @@
         <div class="w-1/3 hidden lg:block text-white  rounded-md">
             <div class="grid grid-cols-2 gap-5">
                 <div class="bg-secondary text-white uppercase h-28 rounded-md flex flex-col justify-center items-center">
-                    <h3 class="text-gray font-bold text-2xl">total repos</h3>
-                    <h3 class="text-3xl font-bold">45</h3>
+                    <h3 class="text-gray font-bold text-2xl">repos</h3>
+                    <h3 class="text-3xl font-bold">16</h3>
                 </div>
                 <div class="bg-secondary h-28 rounded-md text-white uppercase flex flex-col justify-center items-center">
-                    <h3 class="text-gray font-bold text-2xl">total repos</h3>
-                    <h3 class="text-3xl font-bold">45</h3>
+                    <h3 class="text-gray font-bold text-2xl">issues</h3>
+                    <h3 class="text-3xl font-bold">67</h3>
                 </div>
             </div>
             <div class="bg-secondary pb-5 rounded-md">
-                <h3 class="mx-5 mt-2 bg-secondary text-2xl uppercase text-gray text-center">Recent repos</h3>
+                <h3 class="ml-2 mt-2 bg-secondary text-2xl uppercase text-gray text-start">Recent repos</h3>
                 <table class="mt-5  text-sm text-left">
                     <thead class="text-xs bg-main/50 text-gray uppercase">
                         <tr>
