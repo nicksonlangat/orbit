@@ -2,7 +2,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User
 
 from rest_framework import serializers
-from .models import Organization
+from .models import Organization, Tag, TagSelection
 
 class OrganizationSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField(read_only=True)
@@ -18,6 +18,25 @@ class OrganizationSerializer(serializers.ModelSerializer):
         return obj.url.strip().split('/')[4]
 
 
+class TagSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Tag
+            fields = [
+                 "id", "name"
+                ]
+
+
+class TagSelectionSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = TagSelection
+            fields = [
+                 "id", "user", "tags"
+                ]
+            
+        def to_representation(self, instance):
+            data = super(TagSelectionSerializer, self).to_representation(instance)
+            data["tags"] = TagSerializer(instance.tags.all(), many=True).data
+            return data
 
 class UserSerializer(serializers.ModelSerializer):
         class Meta:

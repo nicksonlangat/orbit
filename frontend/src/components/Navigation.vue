@@ -13,50 +13,78 @@
     <div>
         <Mobile />
     </div>
+   <div class="hidden lg:block" v-if="user?.is_superuser && page === 'questions'">
+    <NewTagModal />
+   </div>
+    
     <div v-if="page === 'home'" class="hidden lg:block">
         <a href="/login" class="text-gray hover:text-white transition-all duration-500 py-2 rounded-md">Log in</a>
 
     </div>
+   
     <div v-else class="hidden lg:flex gap-5 text-gray items-center">
-        <span class="px-2 py-2 bg-secondary cursor-pointer rounded-full">
-            <IconUser />
-        </span>
+        <div class="flex items-center gap-2">
+            <span class="px-2 py-2 bg-secondary cursor-pointer rounded-full">
+                <IconUser />
+            </span>
+            <div>
+                <h3>{{ user?.username }}</h3>
+            </div>
+        </div>
         <IconLogout @click="logoutUser" class="cursor-pointer" />
     </div>
 </nav>
 </template>
 
 <script>
-import {
-    IconMenu2
-} from '@tabler/icons-vue';
 import Mobile from './Mobile.vue'
 import {
     IconBell,
     IconUser,
     IconSettings,
-    IconPlanet
-} from '@tabler/icons-vue';
-import {
+    IconPlanet,
+    IconMenu2,
     IconLogout
-} from '@tabler/icons-vue';
+} from '@tabler/icons-vue'
+import {
+    mapActions,
+    mapGetters
+} from 'vuex'
+import NewTagModal from './NewTagModal.vue'
 export default {
     name: 'Navigation',
     components: {
-        IconBell,
-        IconUser,
-        IconSettings,
-        IconPlanet,
-        IconMenu2,
-        Mobile,
-        IconLogout
-    },
+    IconBell,
+    IconUser,
+    IconSettings,
+    IconPlanet,
+    IconMenu2,
+    Mobile,
+    IconLogout,
+    NewTagModal
+},
     data() {
         return {
             page: ""
         }
     },
+    computed: {
+        ...mapGetters({
+            getStoredUser: 'getStoredUser',
+        }),
+        user() {
+            return this.getStoredUser
+        },
+    },
     methods: {
+        ...mapActions({
+            getUsersMe: 'getUsersMe',
+        }),
+        init() {
+            this.getUsersMe({
+                cb: () => {}
+            })
+        },
         logoutUser() {
             localStorage.removeItem("orbit")
             localStorage.removeItem("hasOrbitPermission")
@@ -66,6 +94,7 @@ export default {
         }
     },
     mounted() {
+        this.init()
         this.page = this.$route.name
     }
 }
