@@ -1,3 +1,6 @@
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.models import User
+
 from rest_framework import serializers
 from .models import Organization
 
@@ -15,3 +18,40 @@ class OrganizationSerializer(serializers.ModelSerializer):
         return obj.url.strip().split('/')[4]
 
 
+
+class UserSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = [
+                 "id", "username", "first_name",
+                 "last_name", "is_superuser"
+                ]
+
+class UserSignupSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = fields = ["username", "password", "first_name", "last_name"]
+            extra_kwargs = {"password": {"write_only": True}}
+
+        def validate_password(self, value):
+            validate_password(value)
+            return value
+
+        def create(self, validated_data):
+            user = User(**validated_data)
+            user.set_password(validated_data["password"])
+            user.save()
+            return user
+
+class UserPasswordResetSerializer(serializers.Serializer):
+        email = serializers.EmailField(required=True)
+        
+        class Meta:
+            fields = [ "email" ]
+
+
+class UserPasswordSerializer(serializers.Serializer):
+        password = serializers.CharField(required=True)
+        
+        class Meta:
+            fields = [ "password" ]

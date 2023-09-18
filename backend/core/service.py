@@ -63,6 +63,8 @@ def scrape_data(tag):
     return questions
 
 def get_github_issues(url):
+    if len(url) == 0:
+        return []
 
     url = url.strip().split('/')
     owner = url[3]
@@ -78,7 +80,8 @@ def get_github_issues(url):
 def organization_create(data, *args, **kwargs) -> Organization:
 
     obj = Organization(
-        url=data["url"]
+        url=data["url"],
+        user=data["user"]
     )
 
     obj.full_clean()

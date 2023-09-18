@@ -1,14 +1,19 @@
 import axios from 'axios'
 
-export default (content_type = 'application/json') => {
+export default (use_token = true) => {
+
+    let headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+    }
+
+    if (use_token) {
+        headers['Authorization'] = `Bearer ${localStorage.getItem('orbit')}` 
+    }
     const Api = axios.create({
         baseURL: process.env.VUE_APP_BASE_URL,
         withCredentials: false,
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': content_type,
-            // Authorization: `Bearer ${token.access}`
-        },
+        headers: headers
     })
     return Api
 }

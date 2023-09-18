@@ -5,12 +5,12 @@
         <div class="lg:w-5/6 rounded-md">
             <div class="mx-5 lg:mx-0 rounded-md">
                 <div class="grid relative text-gray lg:grid-cols-3 gap-5">
-                        <select v-model="currentRepo" class="bg-secondary focus:border-primary text-sm w-[340px] lg:w-full focus:outline-none placeholder:text-gray focus:ring-0 py-2 pl-4 rounded-md" placeholder="Search issues">
-                            <option class="text-sm" v-for="org in organizations" :value="org.url">{{org.name}} - {{ org.repo }}</option>
-                        </select>
-                        <input v-model="text" type="text" class="bg-secondary focus:outline-none focus:border-primary placeholder:text-gray text-sm focus:ring-0 py-2 px-6 pl-10 rounded-md" placeholder="Search issues">
-                        <IconSearch size="20" class="absolute text-gray lg:top-2 top-16 mt-1 lg:mt-0 left-3  lg:left-80" />
-                        <NewOrganizationModal />
+                    <select v-model="currentRepo" class="bg-secondary focus:border-primary text-sm w-[340px] lg:w-full focus:outline-none placeholder:text-gray focus:ring-0 py-2 pl-4 rounded-md" placeholder="Search issues">
+                        <option class="text-sm" v-for="org in organizations" :value="org.url">{{org.name}} - {{ org.repo }}</option>
+                    </select>
+                    <input v-model="text" type="text" class="bg-secondary focus:outline-none focus:border-primary placeholder:text-gray text-sm focus:ring-0 py-2 px-6 pl-10 rounded-md" placeholder="Search issues">
+                    <IconSearch size="20" class="absolute text-gray lg:top-2 top-16 mt-1 lg:mt-0 left-3  lg:left-80" />
+                    <NewOrganizationModal />
                 </div>
                 <div v-if="isLoading" class="flex mt-20 flex-col justify-center items-center text-gray gap-3 text-2xl">
                     <svg aria-hidden="true" class="inline w-10 h-10 mr-2 text-secondary animate-spin fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -22,7 +22,7 @@
                 <div class="lg:hidden grid gap-4 mt-5">
                     <div v-for="issue in filteredIssues" class="bg-secondary text-white rounded-md h-12">
                         <div class="mt-2 ml-3 mr-2 flex justify-between items-center">
-                                <a target="_blank" :href="issue.html_url" class="text-xs">{{ truncateString(issue.title, 90) }}</a>
+                            <a target="_blank" :href="issue.html_url" class="text-xs">{{ truncateString(issue.title, 90) }}</a>
                             <div>
                                 <a target="_blank" :href="issue.html_url">
                                     <IconGitBranch class="text-success" />
@@ -225,12 +225,15 @@ export default {
     mounted() {
         this.getAllOrganizations({
             cb: (res) => {
-                this.currentRepo = res[0].url
-                this.currentOrganization = res[0]
+                if (res.length) {
+                    this.currentRepo = res[0].url
+                    this.currentOrganization = res[0]
+                }
             }
         })
         this.init()
         this.emitter.on("refreshRepos", () => {
+            this.init()
             this.getAllOrganizations({
                 cb: () => {}
             })
