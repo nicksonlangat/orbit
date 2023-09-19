@@ -1,6 +1,6 @@
 <template>
 <div class="container font-base mx-auto  flex items-center justify-center">
-    <div class="mx-3 pb-10 mt-44 bg-secondary rounded-md lg:mx-0 w-full max-w-md">
+    <div class="mx-3 pb-10 lg:mt-44 mt-28 bg-secondary rounded-md lg:mx-0 w-full max-w-md">
        <div class="flex flex-col items-center mt-5 gap-2">
         <IconPlanet size="48" class="text-primary"/>
         <h3 class="text-gray text-2xl font-bold"> Welcome back</h3>
