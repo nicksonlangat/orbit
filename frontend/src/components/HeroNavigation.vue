@@ -7,8 +7,7 @@
     </div>
 
     <div class="hidden lg:flex text-gray text-lg gap-5 relative">
-        <a :class="page === 'issues' ? 'text-white underline decoration-primary' : ''" class="hover:text-white transition-all duration-300" href="/issues">Github issues</a>
-        <a :class="page === 'questions' ? 'text-white underline decoration-primary' : ''" class="hover:text-white transition-all duration-300" href="/questions">Stackoveflow questions</a>
+        <a class="hover:text-white text-gray transition-all duration-300" href="/#how">How it works</a>
     </div>
     <div>
         <Mobile />
@@ -35,7 +34,6 @@
     </div>
 </nav>
 </template>
-
 <script>
 import Mobile from './Mobile.vue'
 import {
@@ -46,10 +44,6 @@ import {
     IconMenu2,
     IconLogout
 } from '@tabler/icons-vue'
-import {
-    mapActions,
-    mapGetters
-} from 'vuex'
 import NewTagModal from './NewTagModal.vue'
 export default {
     name: 'Navigation',
@@ -69,32 +63,9 @@ export default {
         }
     },
     computed: {
-        ...mapGetters({
-            getStoredUser: 'getStoredUser',
-        }),
-        user() {
-            return this.getStoredUser
-        },
     },
-    methods: {
-        ...mapActions({
-            getUsersMe: 'getUsersMe',
-        }),
-        init() {
-            this.getUsersMe({
-                cb: () => {}
-            })
-        },
-        logoutUser() {
-            localStorage.removeItem("orbit")
-            localStorage.removeItem("hasOrbitPermission")
-            this.$router.push({
-                "name": "login"
-            })
-        }
-    },
+    methods: {},
     mounted() {
-        this.init()
         this.page = this.$route.name
     }
 }
